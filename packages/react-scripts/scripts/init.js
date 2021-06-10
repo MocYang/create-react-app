@@ -192,6 +192,7 @@ module.exports = function (
   appPackage.scripts = Object.assign(
     {
       start: 'react-scripts start',
+      dev: 'react-scripts dev',
       build: 'react-scripts build',
       test: 'react-scripts test',
       eject: 'react-scripts eject',
@@ -374,6 +375,33 @@ module.exports = function (
   console.log(chalk.cyan(`  ${displayedCommand} start`));
   console.log('    Starts the development server.');
   console.log();
+
+  console.log(chalk.cyan(`  ${displayedCommand} dev`));
+  console.log(`    Starts the development server to compile files into build folder.
+                   This will set the NODE_ENV=development, means we are use development
+                   environment, but we continually compile all files in the folder build/*,
+                   so that you can view the pages under your real server, such as: flask, django.
+                   You should correctly set up the server's templates folder, because the 
+                   static index.html was under $your frontend folder$/build/index.html.
+                   Also, all static files relative was under $you frontend folder$/build/static/*,
+                   you should set the static file path for your backend server too.
+                   
+                   such as: 
+                     app = Flask(
+                        __name__,
+                        instance_relative_config=True,
+                        template_folder='static/build',
+                        static_folder='static/build',
+                    )
+                   
+                   Warning!
+                   
+                   Do not development new features under this mode. This is ONLY for test reason.
+                   
+                   All new feature should completed under "yarn start | npm run start" mode.
+  `)
+
+  console.log()
   console.log(
     chalk.cyan(`  ${displayedCommand} ${useYarn ? '' : 'run '}build`)
   );

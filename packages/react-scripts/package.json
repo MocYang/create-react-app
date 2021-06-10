@@ -1,13 +1,13 @@
 {
-  "name": "react-scripts",
-  "version": "4.0.3",
-  "description": "Configuration and scripts for Create React App.",
+  "name": "mocyang-react-scripts",
+  "version": "4.0.4",
+  "description": "MocYang Configuration and scripts for Create React App.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/facebook/create-react-app.git",
+    "url": "https://github.com/MocYang/create-react-app.git",
     "directory": "packages/react-scripts"
   },
-  "license": "MIT",
+  "license": "MIT"
   "engines": {
     "node": "^10.12.0 || >=12.0.0"
   },
