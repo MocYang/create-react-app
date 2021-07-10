@@ -123,8 +123,13 @@ module.exports = function (
   if (fs.existsSync(templateJsonPath)) {
     templateJson = require(templateJsonPath);
   }
+  console.log();
+  console.log('templateJsonPath: ', templateJsonPath);
+  console.log('templateJson: ', templateJson);
 
   const templatePackage = templateJson.package || {};
+
+  console.log('templatePackage: ', JSON.stringify(templatePackage));
 
   // TODO: Deprecate support for root-level `dependencies` and `scripts` in v5.
   // These should now be set under the `package` key.
@@ -138,12 +143,9 @@ module.exports = function (
     );
     console.log('For more information, visit https://cra.link/templates');
   }
+
   if (templateJson.dependencies) {
     templatePackage.dependencies = templateJson.dependencies;
-  }
-
-  if (templateJson.devDependencies) {
-    templatePackage.devDependencies = templateJsonPath.devDependencies;
   }
 
   if (templateJson.scripts) {
@@ -178,7 +180,7 @@ module.exports = function (
   ];
 
   // Keys from templatePackage that will be merged with appPackage
-  const templatePackageToMerge = ['dependencies', 'scripts', 'devDependencies'];
+  const templatePackageToMerge = ['dependencies', 'scripts'];
 
   // Keys from templatePackage that will be added to appPackage,
   // replacing any existing entries.
@@ -208,6 +210,16 @@ module.exports = function (
     templateScripts
   );
 
+  appPackage.devDependencies = Object.assign(
+    {},
+    templatePackage.devDependencies
+  );
+
+  // appPackage.devDependencies = Object.assign(
+  //   {},
+  //   templatePackage.devDependencies
+  // )
+
   // Update scripts for Yarn users
   if (useYarn) {
     appPackage.scripts = Object.entries(appPackage.scripts).reduce(
@@ -227,10 +239,16 @@ module.exports = function (
   // Setup the browsers list
   appPackage.browserslist = defaultBrowsers;
 
+  console.log();
+  console.log(templatePackageToReplace);
+
   // Add templatePackage keys/values to appPackage, replacing existing entries
   templatePackageToReplace.forEach(key => {
     appPackage[key] = templatePackage[key];
   });
+
+  console.log();
+  console.log('appPackage: ', JSON.stringify(appPackage));
 
   fs.writeFileSync(
     path.join(appPath, 'package.json'),
@@ -314,8 +332,6 @@ module.exports = function (
     ...templatePackage.dependencies,
     ...templatePackage.devDependencies,
   });
-
-  console.log(JSON.stringify(dependenciesToInstall));
 
   if (dependenciesToInstall.length) {
     args = args.concat(
