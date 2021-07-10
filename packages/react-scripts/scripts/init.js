@@ -123,13 +123,8 @@ module.exports = function (
   if (fs.existsSync(templateJsonPath)) {
     templateJson = require(templateJsonPath);
   }
-  console.log();
-  console.log('templateJsonPath: ', templateJsonPath);
-  console.log('templateJson: ', templateJson);
 
   const templatePackage = templateJson.package || {};
-
-  console.log('templatePackage: ', JSON.stringify(templatePackage));
 
   // TODO: Deprecate support for root-level `dependencies` and `scripts` in v5.
   // These should now be set under the `package` key.
@@ -215,11 +210,6 @@ module.exports = function (
     templatePackage.devDependencies
   );
 
-  // appPackage.devDependencies = Object.assign(
-  //   {},
-  //   templatePackage.devDependencies
-  // )
-
   // Update scripts for Yarn users
   if (useYarn) {
     appPackage.scripts = Object.entries(appPackage.scripts).reduce(
@@ -239,16 +229,10 @@ module.exports = function (
   // Setup the browsers list
   appPackage.browserslist = defaultBrowsers;
 
-  console.log();
-  console.log(templatePackageToReplace);
-
   // Add templatePackage keys/values to appPackage, replacing existing entries
   templatePackageToReplace.forEach(key => {
     appPackage[key] = templatePackage[key];
   });
-
-  console.log();
-  console.log('appPackage: ', JSON.stringify(appPackage));
 
   fs.writeFileSync(
     path.join(appPath, 'package.json'),
@@ -415,29 +399,6 @@ module.exports = function (
   console.log();
 
   console.log(chalk.cyan(`  ${displayedCommand} dev`));
-  console.log(`    Starts the development server to compile files into build folder.
-                   This will set the NODE_ENV=development, means we are use development
-                   environment, but we continually compile all files in the folder build/*,
-                   so that you can view the pages under your real server, such as: flask, django.
-                   You should correctly set up the server's templates folder, because the 
-                   static index.html was under $your frontend folder$/build/index.html.
-                   Also, all static files relative was under $you frontend folder$/build/static/*,
-                   you should set the static file path for your backend server too.
-                   
-                   such as: 
-                     app = Flask(
-                        __name__,
-                        instance_relative_config=True,
-                        template_folder='static/build',
-                        static_folder='static/build',
-                    )
-                   
-                   Warning!
-                   
-                   Do not development new features under this mode. This is ONLY for test reason.
-                   
-                   All new feature should completed under "yarn start | npm run start" mode.
-  `);
 
   console.log();
   console.log(
