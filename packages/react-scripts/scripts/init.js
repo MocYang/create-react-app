@@ -23,7 +23,7 @@ const { defaultBrowsers } = require('react-dev-utils/browsersHelper');
 const os = require('os');
 const verifyTypeScriptSetup = require('./utils/verifyTypeScriptSetup');
 
-function isInGitRepository () {
+function isInGitRepository() {
   try {
     execSync('git rev-parse --is-inside-work-tree', { stdio: 'ignore' });
     return true;
@@ -32,7 +32,7 @@ function isInGitRepository () {
   }
 }
 
-function isInMercurialRepository () {
+function isInMercurialRepository() {
   try {
     execSync('hg --cwd . root', { stdio: 'ignore' });
     return true;
@@ -41,7 +41,7 @@ function isInMercurialRepository () {
   }
 }
 
-function tryGitInit () {
+function tryGitInit() {
   try {
     execSync('git --version', { stdio: 'ignore' });
     if (isInGitRepository() || isInMercurialRepository()) {
@@ -56,11 +56,11 @@ function tryGitInit () {
   }
 }
 
-function tryGitCommit (appPath) {
+function tryGitCommit(appPath) {
   try {
     execSync('git add -A', { stdio: 'ignore' });
     execSync('git commit -m "Initialize project using Create React App"', {
-      stdio: 'ignore'
+      stdio: 'ignore',
     });
     return true;
   } catch (e) {
@@ -81,7 +81,7 @@ function tryGitCommit (appPath) {
   }
 }
 
-module.exports = function(
+module.exports = function (
   appPath,
   appName,
   verbose,
@@ -133,7 +133,7 @@ module.exports = function(
     console.log(
       chalk.yellow(
         'Root-level `dependencies` and `scripts` keys in `template.json` are deprecated.\n' +
-        'This template should be updated to use the new `package` key.'
+          'This template should be updated to use the new `package` key.'
       )
     );
     console.log('For more information, visit https://cra.link/templates');
@@ -141,6 +141,11 @@ module.exports = function(
   if (templateJson.dependencies) {
     templatePackage.dependencies = templateJson.dependencies;
   }
+
+  if (templateJson.devDependencies) {
+    templatePackage.devDependencies = templateJsonPath.devDependencies;
+  }
+
   if (templateJson.scripts) {
     templatePackage.scripts = templateJson.scripts;
   }
@@ -169,11 +174,11 @@ module.exports = function(
     'cpu',
     'preferGlobal',
     'private',
-    'publishConfig'
+    'publishConfig',
   ];
 
   // Keys from templatePackage that will be merged with appPackage
-  const templatePackageToMerge = ['dependencies', 'scripts'];
+  const templatePackageToMerge = ['dependencies', 'scripts', 'devDependencies'];
 
   // Keys from templatePackage that will be added to appPackage,
   // replacing any existing entries.
@@ -198,7 +203,7 @@ module.exports = function(
       cz: 'git-cz',
       'lint-staged': 'lint-staged',
       commitlint: 'commitlint --config commitlint.config.js -e -V',
-      prepare: 'husky install'
+      prepare: 'husky install',
     },
     templateScripts
   );
@@ -208,7 +213,7 @@ module.exports = function(
     appPackage.scripts = Object.entries(appPackage.scripts).reduce(
       (acc, [key, value]) => ({
         ...acc,
-        [key]: value.replace(/(npm run |npm )/, 'yarn ')
+        [key]: value.replace(/(npm run |npm )/, 'yarn '),
       }),
       {}
     );
@@ -216,7 +221,7 @@ module.exports = function(
 
   // Setup the eslint config
   appPackage.eslintConfig = {
-    extends: 'react-app'
+    extends: 'react-app',
   };
 
   // Setup the browsers list
@@ -307,8 +312,11 @@ module.exports = function(
   // Install additional template dependencies, if present.
   const dependenciesToInstall = Object.entries({
     ...templatePackage.dependencies,
-    ...templatePackage.devDependencies
+    ...templatePackage.devDependencies,
   });
+
+  console.log(JSON.stringify(dependenciesToInstall));
+
   if (dependenciesToInstall.length) {
     args = args.concat(
       dependenciesToInstall.map(([dependency, version]) => {
@@ -345,7 +353,7 @@ module.exports = function(
   console.log();
 
   const proc = spawn.sync(command, [remove, templateName], {
-    stdio: 'inherit'
+    stdio: 'inherit',
   });
   if (proc.status !== 0) {
     console.error(`\`${command} ${args.join(' ')}\` failed`);
@@ -369,12 +377,15 @@ module.exports = function(
   }
 
   // 配置 husky
-
-  spawn.sync('npm', ['set-script', 'prepare', 'husky install'])
-  spawn.sync('npm', ['run', 'prepare'])
-  spawn.sync('npx', ['husky', 'add', '.husky/pre-commit', '"yarn lint-staged"'])
-  spawn.sync('npx', ['husky', 'add', '.husky/commit-msg', '"yarn commitlint"'])
-
+  spawn.sync('npm', ['set-script', 'prepare', 'husky install']);
+  spawn.sync('npm', ['run', 'prepare']);
+  spawn.sync('npx', [
+    'husky',
+    'add',
+    '.husky/pre-commit',
+    '"yarn lint-staged"',
+  ]);
+  spawn.sync('npx', ['husky', 'add', '.husky/commit-msg', '"yarn commitlint"']);
 
   // Change displayed command to yarn instead of yarnpkg
   const displayedCommand = useYarn ? 'yarn' : 'npm';
@@ -447,7 +458,7 @@ module.exports = function(
   console.log('Happy hacking!');
 };
 
-function isReactInstalled (appPackage) {
+function isReactInstalled(appPackage) {
   const dependencies = appPackage.dependencies || {};
 
   return (
