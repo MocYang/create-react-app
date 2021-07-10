@@ -23,7 +23,7 @@ const { defaultBrowsers } = require('react-dev-utils/browsersHelper');
 const os = require('os');
 const verifyTypeScriptSetup = require('./utils/verifyTypeScriptSetup');
 
-function isInGitRepository() {
+function isInGitRepository () {
   try {
     execSync('git rev-parse --is-inside-work-tree', { stdio: 'ignore' });
     return true;
@@ -32,7 +32,7 @@ function isInGitRepository() {
   }
 }
 
-function isInMercurialRepository() {
+function isInMercurialRepository () {
   try {
     execSync('hg --cwd . root', { stdio: 'ignore' });
     return true;
@@ -41,7 +41,7 @@ function isInMercurialRepository() {
   }
 }
 
-function tryGitInit() {
+function tryGitInit () {
   try {
     execSync('git --version', { stdio: 'ignore' });
     if (isInGitRepository() || isInMercurialRepository()) {
@@ -56,11 +56,11 @@ function tryGitInit() {
   }
 }
 
-function tryGitCommit(appPath) {
+function tryGitCommit (appPath) {
   try {
     execSync('git add -A', { stdio: 'ignore' });
     execSync('git commit -m "Initialize project using Create React App"', {
-      stdio: 'ignore',
+      stdio: 'ignore'
     });
     return true;
   } catch (e) {
@@ -81,7 +81,7 @@ function tryGitCommit(appPath) {
   }
 }
 
-module.exports = function (
+module.exports = function(
   appPath,
   appName,
   verbose,
@@ -133,7 +133,7 @@ module.exports = function (
     console.log(
       chalk.yellow(
         'Root-level `dependencies` and `scripts` keys in `template.json` are deprecated.\n' +
-          'This template should be updated to use the new `package` key.'
+        'This template should be updated to use the new `package` key.'
       )
     );
     console.log('For more information, visit https://cra.link/templates');
@@ -169,7 +169,7 @@ module.exports = function (
     'cpu',
     'preferGlobal',
     'private',
-    'publishConfig',
+    'publishConfig'
   ];
 
   // Keys from templatePackage that will be merged with appPackage
@@ -192,10 +192,13 @@ module.exports = function (
   appPackage.scripts = Object.assign(
     {
       start: 'react-scripts start',
-      dev: 'react-scripts dev',
       build: 'react-scripts build',
       test: 'react-scripts test',
       eject: 'react-scripts eject',
+      cz: 'git-cz',
+      'lint-staged': 'lint-staged',
+      commitlint: 'commitlint --config commitlint.config.js -e -V',
+      prepare: 'husky install'
     },
     templateScripts
   );
@@ -205,7 +208,7 @@ module.exports = function (
     appPackage.scripts = Object.entries(appPackage.scripts).reduce(
       (acc, [key, value]) => ({
         ...acc,
-        [key]: value.replace(/(npm run |npm )/, 'yarn '),
+        [key]: value.replace(/(npm run |npm )/, 'yarn ')
       }),
       {}
     );
@@ -213,7 +216,7 @@ module.exports = function (
 
   // Setup the eslint config
   appPackage.eslintConfig = {
-    extends: 'react-app',
+    extends: 'react-app'
   };
 
   // Setup the browsers list
@@ -304,7 +307,7 @@ module.exports = function (
   // Install additional template dependencies, if present.
   const dependenciesToInstall = Object.entries({
     ...templatePackage.dependencies,
-    ...templatePackage.devDependencies,
+    ...templatePackage.devDependencies
   });
   if (dependenciesToInstall.length) {
     args = args.concat(
@@ -342,7 +345,7 @@ module.exports = function (
   console.log();
 
   const proc = spawn.sync(command, [remove, templateName], {
-    stdio: 'inherit',
+    stdio: 'inherit'
   });
   if (proc.status !== 0) {
     console.error(`\`${command} ${args.join(' ')}\` failed`);
@@ -364,6 +367,14 @@ module.exports = function (
   } else {
     cdpath = appPath;
   }
+
+  // 配置 husky
+
+  spawn.sync('npm', ['set-script', 'prepare', 'husky install'])
+  spawn.sync('npm', ['run', 'prepare'])
+  spawn.sync('npx', ['husky', 'add', '.husky/pre-commit', '"yarn lint-staged"'])
+  spawn.sync('npx', ['husky', 'add', '.husky/commit-msg', '"yarn commitlint"'])
+
 
   // Change displayed command to yarn instead of yarnpkg
   const displayedCommand = useYarn ? 'yarn' : 'npm';
@@ -399,9 +410,9 @@ module.exports = function (
                    Do not development new features under this mode. This is ONLY for test reason.
                    
                    All new feature should completed under "yarn start | npm run start" mode.
-  `)
+  `);
 
-  console.log()
+  console.log();
   console.log(
     chalk.cyan(`  ${displayedCommand} ${useYarn ? '' : 'run '}build`)
   );
@@ -436,7 +447,7 @@ module.exports = function (
   console.log('Happy hacking!');
 };
 
-function isReactInstalled(appPackage) {
+function isReactInstalled (appPackage) {
   const dependencies = appPackage.dependencies || {};
 
   return (
