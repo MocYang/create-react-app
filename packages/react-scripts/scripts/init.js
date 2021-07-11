@@ -376,16 +376,25 @@ module.exports = function (
     cdpath = appPath;
   }
 
-  // 配置 husky
-  spawn.sync('npm', ['set-script', 'prepare', 'husky install']);
-  spawn.sync('npm', ['run', 'prepare']);
-  spawn.sync('npx', [
-    'husky',
-    'add',
-    '.husky/pre-commit',
-    '"yarn lint-staged"',
-  ]);
-  spawn.sync('npx', ['husky', 'add', '.husky/commit-msg', '"yarn commitlint"']);
+  try {
+    // 配置 husky
+    spawn.sync('npm', ['set-script', 'prepare', 'husky install']);
+    spawn.sync('npm', ['run', 'prepare']);
+    spawn.sync('npx', [
+      'husky',
+      'add',
+      '.husky/pre-commit',
+      '"yarn lint-staged"',
+    ]);
+    spawn.sync('npx', [
+      'husky',
+      'add',
+      '.husky/commit-msg',
+      '"yarn commitlint"',
+    ]);
+  } catch (e) {
+    console.error(e);
+  }
 
   // Change displayed command to yarn instead of yarnpkg
   const displayedCommand = useYarn ? 'yarn' : 'npm';
