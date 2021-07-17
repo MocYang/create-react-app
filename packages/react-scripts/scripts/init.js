@@ -189,6 +189,13 @@ module.exports = function (
   // Copy over some of the devDependencies
   appPackage.dependencies = appPackage.dependencies || {};
 
+  const devScripts = !isInGitRepository() ? {
+    cz: 'git-cz',
+    'lint-staged': 'lint-staged',
+    commitlint: 'commitlint --config commitlint.config.js -e -V',
+    prepare: 'husky install'
+  } : {}
+
   // Setup the script rules
   const templateScripts = templatePackage.scripts || {};
   appPackage.scripts = Object.assign(
@@ -197,10 +204,7 @@ module.exports = function (
       build: 'react-scripts build',
       test: 'react-scripts test',
       eject: 'react-scripts eject',
-      cz: 'git-cz',
-      'lint-staged': 'lint-staged',
-      commitlint: 'commitlint --config commitlint.config.js -e -V',
-      prepare: 'husky install',
+      ...devScripts
     },
     templateScripts
   );
@@ -376,24 +380,30 @@ module.exports = function (
     cdpath = appPath;
   }
 
-  try {
-    // 配置 husky
-    spawn.sync('npm', ['set-script', 'prepare', 'husky install']);
-    spawn.sync('npm', ['run', 'prepare']);
-    spawn.sync('npx', [
-      'husky',
-      'add',
-      '.husky/pre-commit',
-      '"yarn lint-staged"',
-    ]);
-    spawn.sync('npx', [
-      'husky',
-      'add',
-      '.husky/commit-msg',
-      '"yarn commitlint"',
-    ]);
-  } catch (e) {
-    console.error(e);
+  // 只有不是在其他仓库目录下新建目录，才执行husky等的初始化，
+  // 因为，若是在其他仓库下新建的项目，原本的意图应该是作为原仓库的子目录而存在。
+  // 同时，因为husky的初始化是在当前目录下新建一个.git目录。但是这就会与上级仓库的.git冲突。
+  // 而这种情况下，应该交由上级仓库区处理整个仓库的管理。包括：代码的lint，commit等。
+  if (!isInGitRepository()) {
+    try {
+      // 配置 husky
+      spawn.sync('npm', ['set-script', 'prepare', 'husky install']);
+      spawn.sync('npm', ['run', 'prepare']);
+      spawn.sync('npx', [
+        'husky',
+        'add',
+        '.husky/pre-commit',
+        '"yarn lint-staged"',
+      ]);
+      spawn.sync('npx', [
+        'husky',
+        'add',
+        '.husky/commit-msg',
+        '"yarn commitlint"',
+      ]);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   // Change displayed command to yarn instead of yarnpkg
