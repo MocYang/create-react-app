@@ -7,6 +7,10 @@ import { Provider } from 'react-redux'
 import reportWebVitals from './reportWebVitals'
 import 'normalize.css'
 
+if(process.env.NODE_ENV === 'development') {
+  import('./api/server')
+}
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
