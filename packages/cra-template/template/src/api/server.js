@@ -1,7 +1,5 @@
 import { createServer } from 'miragejs'
-
-// 不想被 migrate 拦截的请求
-let urlPassthrough = ''
+import { urlNoMock } from './config' // 不想被 migrate 拦截的请求
 
 export function makeServer({ environment }) {
   createServer({
@@ -23,8 +21,15 @@ export function makeServer({ environment }) {
        * })
        */
 
-      // add white list.
-      this.passthrough(urlPassthrough + '/**')
+      /**
+       * 参考： https://miragejs.com/api/classes/server/#passthrough
+       */
+      this.passthrough(urlNoMock + '/**', (req) => {
+        // 以下方法调用为必须。目的是把透过 miragejs 的请求，响应之后，传回 axios 本身
+        req.onload = (e) => {
+          req.onloadend()
+        }
+      })
     }
   })
 }
