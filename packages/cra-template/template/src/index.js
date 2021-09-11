@@ -5,10 +5,11 @@ import App from './routes/index'
 import { store } from './app/store'
 import { Provider } from 'react-redux'
 import reportWebVitals from './reportWebVitals'
+import { makeServer } from './api/server'
 import 'normalize.css'
 
-if(process.env.NODE_ENV === 'development') {
-  import('./api/server')
+if (process.env.NODE_ENV === 'development') {
+  makeServer({ environment: 'development' })
 }
 
 ReactDOM.render(
