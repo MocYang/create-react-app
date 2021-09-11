@@ -9,10 +9,6 @@ export let urlNoMock = 'http://example.com/api/xxx'
 
 let urlPrefix = ''
 
-if (process.env.NODE_ENV) {
-  urlPrefix = '/fake'
-}
-
 function processSlash(path, handlePrefix = true, handlePostfix = false) {
   if (handlePrefix) {
     return path.startsWith('/') ? path.slice(1, path.length) : path
@@ -26,6 +22,9 @@ function processSlash(path, handlePrefix = true, handlePostfix = false) {
 }
 
 export const addressConfig = {
-  getXNoMock: `${urlNoMock}/api/xxx`, // url passthrough miragejs
-  getXXX: `${urlPrefix}/api/xxx` // url intercept by miragejs
+  // url passthrough miragejs
+  getXNoMock: `${urlNoMock}/api/xxx`,
+
+  // url intercept by miragejs
+  getXXX: `${urlPrefix}/api/xxx`
 }

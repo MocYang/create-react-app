@@ -1,5 +1,5 @@
 import { createServer } from 'miragejs'
-import { urlNoMock } from './config' // 不想被 migrate 拦截的请求
+import { urlNoMock, addressConfig } from './config' // 不想被 migrate 拦截的请求
 
 export function makeServer({ environment }) {
   createServer({
@@ -20,6 +20,14 @@ export function makeServer({ environment }) {
        *   }
        * })
        */
+
+      this.get(addressConfig.getXXX, (schema, request) => {
+        return {
+          code: 0,
+          msg: 'success',
+          data: 0
+        }
+      })
 
       /**
        * 参考： https://miragejs.com/api/classes/server/#passthrough
