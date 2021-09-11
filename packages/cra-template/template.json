@@ -1,6 +1,7 @@
 {
   "package": {
     "dependencies": {
+      "axios": "^0.21.4",
       "web-vitals": "^1.0.1",
       "react-router-dom": "^5.2.0",
       "@reduxjs/toolkit": "^1.6.0",
